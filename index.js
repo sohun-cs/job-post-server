@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
+const jwt = require('jsonwebtoken');
 const port = process.env.PORT || 5000;
 const app = express();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
@@ -30,12 +31,24 @@ const client = new MongoClient(uri, {
 
 async function run() {
 
-  const jobCollection = client.db("jobPostDB").collection("jobs");
-  const bidCollection = client.db("jobPostDB").collection("bids");
-
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    // Send a ping to confirm a successful connection
+
+
+    const jobCollection = client.db("jobPostDB").collection("jobs");
+    const bidCollection = client.db("jobPostDB").collection("bids");
+
+
+    // JWT generate
+    app.post('/jwt', async(req, res) => {
+      const user = req.body;
+      const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: '10d'
+      });
+      res.send({token})
+    })
+
+
 
     app.get('/jobs', async (req, res) => {
       const result = await jobCollection.find().toArray();
