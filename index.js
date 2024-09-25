@@ -69,6 +69,21 @@ async function run() {
       res.send(result);
     });
 
+    app.put('/job/:id', async (req, res) => {
+      const id = req.params.id;
+      const jobData = req.body;
+      const query = { _id: new ObjectId(id) };
+      const option = { upsert: true };
+      const updateDoc = {
+        $set: {
+          ...jobData,
+        },
+      }
+      const result = await jobCollection.updateOne(query, updateDoc, option);
+      res.send(result);
+    });
+
+
     app.post('/bids', async (req, res) => {
       const bidData = req.body;
       const result = await bidCollection.insertOne(bidData);
@@ -89,19 +104,18 @@ async function run() {
       res.send(result);
     });
 
-    app.put('/job/:id', async (req, res) => {
+
+    app.patch('/bid/:id', async (req, res) => {
       const id = req.params.id;
-      const jobData = req.body;
+      const status = req.body;
       const query = { _id: new ObjectId(id) };
-      const option = { upsert: true };
       const updateDoc = {
-        $set: {
-          ...jobData,
-        },
-      }
-      const result = await jobCollection.updateOne(query, updateDoc, option);
-      res.send(result);
+        $set: status
+      };
+      const result = await bidCollection.updateOne(query, updateDoc);
+      res.send(result)
     })
+
 
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
