@@ -52,7 +52,7 @@ async function run() {
     app.get('/jobs/:email', async (req, res) => {
       const email = req.params.email;
       const query = { 'buyer.email': email };
-      const result = await jobCollection.findOne(query);
+      const result = await jobCollection.find(query).toArray();
       res.send(result);
     });
 
@@ -72,6 +72,20 @@ async function run() {
     app.post('/bids', async (req, res) => {
       const bidData = req.body;
       const result = await bidCollection.insertOne(bidData);
+      res.send(result);
+    });
+
+    app.get('/my-bids/:email', async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const result = await bidCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    app.get('/bid-requests/:email', async (req, res) => {
+      const email = req.params.email;
+      const query = { 'buyer.email': email }
+      const result = await bidCollection.find(query).toArray();
       res.send(result);
     });
 
