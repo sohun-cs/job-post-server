@@ -98,7 +98,7 @@ async function run() {
       res.send(result)
     });
 
-    app.get('/job/:id', verifyToken, async (req, res) => {
+    app.get('/job/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await jobCollection.findOne(query);
@@ -149,6 +149,17 @@ async function run() {
 
     app.post('/bids', async (req, res) => {
       const bidData = req.body;
+
+      const query = {
+        email: bidData.email,
+        jobId: bidData.jobId
+      };
+      const alreadyApplied = await bidCollection.findOne(query);
+
+      if (alreadyApplied) {
+        return res.status(400).send('You have already placed a bid on this job.');
+      }
+
       const result = await bidCollection.insertOne(bidData);
       res.send(result);
     });
