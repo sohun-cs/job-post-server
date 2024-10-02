@@ -11,6 +11,8 @@ const corsOptions = {
   origin: [
     'http://localhost:5173',
     'http://localhost:5174',
+    'https://jobpost-ecb07.web.app',
+    'https://sparkling-paprenjak-63336f.netlify.app'
   ],
   credentials: true,
   optionSuccessStatus: 200,
@@ -22,7 +24,6 @@ app.use(cookieParser());
 // verify jwt middleware
 const verifyToken = (req, res, next) => {
   const token = req.cookies?.token;
-  console.log(token);
 
   if (!token) return res.status(401).send({ message: 'unauthorized access' });
 
@@ -31,8 +32,6 @@ const verifyToken = (req, res, next) => {
       if (err) {
         return res.status(401).send({ message: 'unauthorized access' });
       }
-      console.log(decoded);
-
       req.user = decoded;
       next();
 
@@ -199,7 +198,6 @@ async function run() {
       const filter = req.query.filter;
       const sort = req.query.sort;
       const search = req.query.search;
-      console.log(size, page);
 
       let query = {
         job_title: {
